@@ -1,6 +1,6 @@
 /*
  * TV-Web-Launcher – TizenBrew-Loader (automatisch erzeugt von tools/build-module.js, nicht von Hand aendern)
- * NAS: http://192.168.1.194:8095  ·  Version 1.0.1
+ * NAS: http://192.168.1.194:8095  ·  Version 1.1.0
  * TizenBrew fuehrt diese Datei in jeder geladenen Seite aus (auch nach Wechsel auf fremde Domains).
  */
 (function () {
@@ -9,6 +9,7 @@
   function run() {
     if (!document.documentElement) { setTimeout(run, 15); return; }
     if (!window.__TVL_BASE) window.__TVL_BASE = BASE;
+    if (!window.__TVL_HOME) window.__TVL_HOME = "http://127.0.0.1:8081/module/gh%2FSchnitzelbrot6969%2Ftv/tv.html";
     /*
      * TV-Web-Launcher – tv.js
      * Wird vom TizenBrew-Modul (loader.js) in jede geoeffnete Webseite injiziert.
@@ -59,7 +60,7 @@
       // ---------- Konfiguration (sites.json) beschaffen ----------
       // Quellen: 1) window.name (von der Kachelseite gesetzt, ueberlebt Domainwechsel)
       //          2) sessionStorage-Cache dieser Domain  3) direkt vom NAS (auf https-Seiten evtl. blockiert)
-      var state = { sites: [], current: null, currentId: null, home: BASE ? BASE + '/tv' : '' };
+      var state = { sites: [], current: null, currentId: null, home: window.__TVL_HOME || (BASE ? BASE + '/tv' : '') };
 
       function readWindowName() {
         try {
@@ -73,16 +74,15 @@
       function adopt(cfg) {
         if (!cfg) return false;
         if (cfg.sites && cfg.sites.length) state.sites = cfg.sites;
-        if (cfg.base) {
-          if (!BASE) BASE = cfg.base;
-          state.home = cfg.base + '/tv';
-        }
+        if (cfg.base && !BASE) BASE = cfg.base;
+        if (cfg.home) state.home = cfg.home;
+        else if (cfg.base && !window.__TVL_HOME) state.home = cfg.base + '/tv';
         if (cfg.current) state.currentId = cfg.current;
         return !!(cfg.sites && cfg.sites.length);
       }
 
       function cacheCfg() {
-        try { sessionStorage.setItem('tvl_cfg', JSON.stringify({ base: BASE, current: state.currentId, sites: state.sites })); } catch (e) { /* */ }
+        try { sessionStorage.setItem('tvl_cfg', JSON.stringify({ base: BASE, home: state.home, current: state.currentId, sites: state.sites })); } catch (e) { /* */ }
       }
 
       var haveCfg = adopt(readWindowName());
@@ -407,7 +407,7 @@
       function atAppStart() {
         var s = state.current;
         if (s && normUrl(s.url) === normUrl(location.href)) return true;
-        if (BASE && document.referrer && document.referrer.indexOf(BASE + '/tv') === 0 && history.length <= 2) return true;
+        if (state.home && document.referrer && document.referrer.indexOf(state.home) === 0 && history.length <= 2) return true;
         return history.length <= 1;
       }
 
@@ -519,7 +519,7 @@
         // Konfiguration vom NAS nachladen (aktualisiert Zoom/CSS, falls window.name fehlt)
         if (BASE) {
           fetch(BASE + '/api/sites', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (data) {
-            adopt({ base: BASE, sites: data.sites, current: state.currentId });
+            adopt({ base: BASE, home: state.home, sites: data.sites, current: state.currentId });
             var before = state.current;
             state.current = findSite();
             cacheCfg();

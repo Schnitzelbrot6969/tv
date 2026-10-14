@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<script>window.__TVL_NAS = ["http://192.168.1.194:8095","http://192.168.1.230:8095"]; window.__TVL_ADMIN = "http://192.168.1.230:8095";</script>
+<script>window.__TVL_NAS = ["http://127.0.0.1:8096","http://192.168.1.194:8095","http://192.168.1.230:8095"]; window.__TVL_ADMIN = "http://192.168.1.230:8095";</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1920">
 <meta name="tvl-tilepage" content="1">
@@ -181,7 +181,11 @@
     tryNext(0);
   }
 
+  var retries = 0;
   function fail(errors) {
+    // Der Hintergrunddienst auf dem TV startet evtl. noch – einige Male still erneut versuchen
+    if (retries < 6) { retries++; setTimeout(load, 2500); return; }
+    retries = 0;
     var el = document.getElementById('error');
     el.innerHTML = 'Liste konnte nicht vom NAS geladen werden.<br>Neuer Versuch mit OK.';
     if (errors && errors.length) {

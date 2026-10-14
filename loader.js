@@ -1,6 +1,6 @@
 /*
  * TV-Web-Launcher – TizenBrew-Loader (automatisch erzeugt von tools/build-module.js, nicht von Hand aendern)
- * NAS: http://192.168.1.194:8095  ·  Version 1.1.1
+ * NAS: http://192.168.1.194:8095  ·  Version 1.2.0
  * TizenBrew fuehrt diese Datei in jeder geladenen Seite aus (auch nach Wechsel auf fremde Domains).
  */
 (function () {

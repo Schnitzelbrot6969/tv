@@ -432,6 +432,7 @@
       }
 
       // ---------- Tastatur ----------
+      var backTimer = null;
       var DIRS = {};
       DIRS[KEY.LEFT] = 'left'; DIRS[KEY.RIGHT] = 'right'; DIRS[KEY.UP] = 'up'; DIRS[KEY.DOWN] = 'down';
 
@@ -452,7 +453,10 @@
         if (code === KEY.BACK || (code === KEY.ESC && !editing)) {
           stop(e);
           if (editing) { ae.blur(); if (current) setFocus(current, { scroll: false }); return; }
-          goBack();
+          // Smart Remote ohne Farbtasten: zweimal schnell Zurueck = Kachelseite.
+          // Deshalb wird ein einzelnes Zurueck kurz verzoegert ausgefuehrt.
+          if (backTimer) { clearTimeout(backTimer); backTimer = null; goHome(); return; }
+          backTimer = setTimeout(function () { backTimer = null; goBack(); }, 450);
           return;
         }
         if (code === KEY.PLAY || code === KEY.PAUSE || code === KEY.PLAYPAUSE || code === KEY.STOP || code === KEY.FF || code === KEY.RW) {
@@ -529,7 +533,7 @@
         try {
           if (!sessionStorage.getItem('tvl_hint')) {
             sessionStorage.setItem('tvl_hint', '1');
-            setTimeout(function () { toast('Rote Taste = Startseite · Zurück = vorherige Seite', 3500); }, 1200);
+            setTimeout(function () { toast('Zurück = vorherige Seite · 2× Zurück = Kacheln', 3500); }, 1200);
           }
         } catch (e) { /* */ }
       }

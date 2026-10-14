@@ -1,0 +1,19 @@
+{
+  "name": "tv-web-launcher",
+  "version": "1.0.0",
+  "description": "TizenBrew-Modul: Kachel-Launcher fuer beliebige Webseiten (verwaltet auf dem NAS)",
+  "packageType": "mods",
+  "appName": "Web-Launcher",
+  "websiteURL": "http://192.168.1.194:8095/tv",
+  "main": "loader.js",
+  "keys": [
+    "ColorF0Red",
+    "MediaPlayPause",
+    "MediaPlay",
+    "MediaPause",
+    "MediaStop",
+    "MediaFastForward",
+    "MediaRewind"
+  ],
+  "license": "MIT"
+}

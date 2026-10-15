@@ -1,6 +1,6 @@
 {
   "name": "tv-web-launcher",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "TizenBrew-Modul: Kachel-Launcher fuer beliebige Webseiten (verwaltet auf dem NAS)",
   "packageType": "mods",
   "appName": "Web-Launcher",
